@@ -116,7 +116,7 @@
    In Cloud Shell in the root directory to initialize terraform
    
 
-# Import Infrastructure
+# Import infrastructure
 
 1. In the Google Cloud Console, on the **Navigation menu**, click **Compute Engine > VM Instances**. Two instances named **tf-instance-1** and **tf-instance-2** have already been created for you.
 
@@ -192,4 +192,60 @@
    ```
    ```
    terraform apply
+   ```
+
+
+# Configure a remote backend
+
+1. Create a [Cloud Storage bucket resource](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket) inside the `storage` module. For the bucket name, use **`Bucket Name`**
+
+   Add the following code to the **modules/storage/storage.tf** file
+   ```
+   resource "google_storage_bucket" "storage-bucket" {
+      name            = "Bucket Name"
+      location        = "US"
+      force_destroy   = true
+      uniform_bucket_level_access = true
+   }
+   ```
+   
+2. Add the module reference to the `main.tf` file. Initialize the module and `apply` the changes to create the bucket using Terraform.
+
+   Add the following to end of the `main.tf` file
+   ```
+   module "storage" {
+      source = "./modules/storage"
+   }
+   ```
+
+   Run the following commands in cloud shell
+   ```
+   terraform init
+   ```
+   ```
+   terraform apply
+   ```
+   
+3. Configure this storage bucket as the [remote backend](https://www.terraform.io/docs/language/settings/backends/gcs.html) inside the `main.tf` file. Be sure to use the **prefix** `terraform/state` so it can be graded successfully.
+
+   ```
+   terraform {
+      backend "gcs" {
+         bucket   = "Bucket Name"
+         prefix   = "terraform/state"
+      }
+      required_providers {
+         google = {
+            source   = "hashicorp/google"
+            version  = "4.47.0"
+         }
+      }
+   }
+   ```
+   
+4. If you've written the configuration correctly, upon `init`, Terraform will ask whether you want to copy the existing state data to the new backend. Type `yes` at the prompt.
+
+   Run the following command to initialize the remote backend
+   ```
+   terraform init
    ```
