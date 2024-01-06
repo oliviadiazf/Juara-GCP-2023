@@ -115,3 +115,81 @@
 
    In Cloud Shell in the root directory to initialize terraform
    
+
+# Import Infrastructure
+
+1. In the Google Cloud Console, on the **Navigation menu**, click **Compute Engine > VM Instances**. Two instances named **tf-instance-1** and **tf-instance-2** have already been created for you.
+
+   Go to Compute Engine > VM Instances. Click on **tf-instance-1**. Copy the Instance ID down somewhere to use later.
+
+   Go to Compute Engine > VM Instances. Click on **tf-instance-2**. Copy the instance ID down somewhere to use later.
+
+   
+2. [Import](https://www.terraform.io/docs/cli/commands/import.html#example-import-into-module) the existing instances into the **instances** module.
+
+   Add the module reference to the end of `main.tf`
+   ```
+   module "instances" {
+      source = "./modules/instances"
+   }
+   ```
+
+   Copy the followinf configuration into the file **modules/instances/instances.tf**
+   ```
+   resource "google_compute_instance" "tf-instance-1" {
+      name         = "tf-instance-1"
+      machine_type = "n1-standard-1"
+      zone         = var.zone
+      boot_disk {
+         initialize_params {
+            image = "debian-cloud/debian-10"
+         }
+      }
+      network_interface {
+         network = "default
+      }
+      metadata_startup_script = <<-EOT
+            #!/bin/bash
+         EOT
+      allow_stopping_for_update = true
+   }
+
+   resource "google_compute_instance" "tf-instance-2" {
+      name         = "tf-instance-2"
+      machine_type = "n1-standard-1"
+      zone         = var.zone
+      boot_disk {
+         initialize_params {
+            image = "debian-cloud/debian-10"
+         }
+      }
+      network_interface {
+         network = "default
+      }
+      metadata_startup_script = <<-EOT
+            #!/bin/bash
+         EOT
+      allow_stopping_for_update = true
+   }
+   ```
+
+   Use the terraform import command to import them into your instances module.
+
+   To import the first instance, use the following command, using the Instance ID for tf-instance-1 you copied down earlier.
+   ```
+   terraform import module.instances.google_compute_instance.tf-instance-1 <Instance ID - 1>
+   ```
+
+   To import the second instance, use the following command, using the Instance ID for tf-instance-2 you copied down earlier.
+   ```
+   terraform import module.instances.google_compute_instance.tf-instance-2 <Instance ID - 2>
+   ```
+   
+4. Apply your changes. Note that since you did not fill out all of the arguments in the entire configuration, the `apply` will **update the instances in-place**. This is fine for lab purposes, but in a production environment, you should make sure to fill out all of the arguments correctly before importing.
+
+   ```
+   terraform plan
+   ```
+   ```
+   terraform apply
+   ```
