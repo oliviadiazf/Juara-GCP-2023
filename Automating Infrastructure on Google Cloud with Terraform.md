@@ -370,4 +370,93 @@
    ```
    terraform apply
    ```
+
+   
+# Use a module from the Registry
+
+1. In the Terraform Registry, browse to the [Network Module](https://registry.terraform.io/modules/terraform-google-modules/network/google/6.0.0).
+   
+2. Add this module to your `main.tf` file.
+   ```
+   module "vpc" {
+      source   = "terraform-google-modules/network/google"
+      version  = "6.0.0"
+
+      project_id = "Enter your project id here"
+      network_name = "VPC Name"
+      routing_mode = "GLOBAL"
+
+      subnets = [
+         {
+            subnet_name   = "subnet-01"
+            subnet_ip     = "10.10.10.0/24"
+            subnet_region = "us-east1"
+         },
+         {
+            subnet_name   = "subnet-02"
+            subnet_ip     = "10.10.20.0/24"
+            subnet_region = "us-east1"
+         }
+      ]
+   }
+   ```
+   
+3. Once you've written the module configuration, initialize Terraform and run an `apply` to create the networks.
+
+   Run the following commands
+   ```
+   terraform init
+   ```
+   ```
+   terraform apply
+   ```
+   
+4. Next, navigate to the `instances.tf` file and update the configuration resources to connect **tf-instance-1** to `subnet-01` and **tf-instance-2** to `subnet-02`.
+
+   Navigate to **modules/instances/instances.tf**. Replace the entire contents of the file with thw following
+   ```
+   resource "google_compute_instance" "tf-instance-1" {
+      name           = "tf-instance-1"
+      machine_type   = "e2-standard-2"
+      zone           = var.zone
+      allow_stopping_for_update = true
+
+      boot_disk {
+         initialize_params {
+            image = "debian-cloud/debian-10"
+         }
+      }
+
+      network_interface {
+         network    = "VPC Name"
+         subnetwork = "subnet-01"
+      }
+   }
+
+   resource "google_compute_instance" "tf-instance-2" {
+      name           = "tf-instance-2"
+      machine_type   = "e2-standard-2"
+      zone           = var.zone
+      allow_stopping_for_update = true
+
+      boot_disk {
+         initialize_params {
+            image = "debian-cloud/debian-10"
+         }
+      }
+
+      network_interface {
+         network      = "VPC Name"
+         subnetwork   = "subnet-02"
+      }
+   }
+   ```
+
+   Run the following commands
+   ```
+   terraform init
+   ```
+   ```
+   terraform apply
+   ```
    
