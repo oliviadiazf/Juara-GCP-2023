@@ -329,3 +329,45 @@
    terraform apply
    ```
    
+# Destroy resources
+
+1. Destroy the third instance **`Instance Name`** by removing the resource from the configuration file. After removing it, initialize terraform and `apply` the changes.
+   
+   Taint the **Instance Name** resource by running the following commmand
+   ```
+   terraform taint module.instances.google_compute_instance.Instance Name
+   ```
+
+   Run the following commands to apply the changes
+   ```
+   terraform init
+   ```
+   ```
+   terraform apply
+   ```
+
+   Remove the following chunk of code from `instances.tf` file
+   ```
+   resource "google_compute_instance" "Instance Name" {
+      name           = "tf-instance-3"
+      machine_type   = "e2-standard-2"
+      zone           = var.zone
+      allow_stopping_for_update = true
+
+      boot_disk {
+         initialize_params {
+            image = "debian-cloud/debian-10"
+         }
+      }
+
+      network_interface {
+         network = "default"
+      }
+   }
+   ```
+
+   Run the following command
+   ```
+   terraform apply
+   ```
+   
