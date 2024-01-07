@@ -202,7 +202,7 @@
    Add the following code to the **modules/storage/storage.tf** file
    ```
    resource "google_storage_bucket" "storage-bucket" {
-      name            = "Bucket Name"
+      name            = "<Bucket Name>"
       location        = "US"
       force_destroy   = true
       uniform_bucket_level_access = true
@@ -231,7 +231,7 @@
    ```
    terraform {
       backend "gcs" {
-         bucket   = "Bucket Name"
+         bucket   = "<Bucket Name>"
          prefix   = "terraform/state"
       }
       required_providers {
@@ -301,8 +301,8 @@
 
    Navigate to **modules/instances/instance.tf**. Add contents of the file with the following:
    ```
-   resource "google_compute_instance" "Instance Name" {
-      name           = "tf-instance-3"
+   resource "google_compute_instance" "<Instance Name>" {
+      name           = "<Instance Name>"
       machine_type   = "e2-standard-2"
       zone           = var.zone
       allow_stopping_for_update = true
@@ -335,7 +335,7 @@
    
    Taint the **Instance Name** resource by running the following commmand
    ```
-   terraform taint module.instances.google_compute_instance.Instance Name
+   terraform taint module.instances.google_compute_instance.<Instance Name>
    ```
 
    Run the following commands to apply the changes
@@ -348,8 +348,8 @@
 
    Remove the following chunk of code from `instances.tf` file
    ```
-   resource "google_compute_instance" "Instance Name" {
-      name           = "tf-instance-3"
+   resource "google_compute_instance" "<Instance Name>" {
+      name           = "<Instance Name>"
       machine_type   = "e2-standard-2"
       zone           = var.zone
       allow_stopping_for_update = true
@@ -382,8 +382,8 @@
       source   = "terraform-google-modules/network/google"
       version  = "6.0.0"
 
-      project_id = "Enter your project id here"
-      network_name = "VPC Name"
+      project_id = "<PROJECT ID>"
+      network_name = "<VPC Name>"
       routing_mode = "GLOBAL"
 
       subnets = [
@@ -428,7 +428,7 @@
       }
 
       network_interface {
-         network    = "VPC Name"
+         network    = "<VPC Name>"
          subnetwork = "subnet-01"
       }
    }
@@ -446,7 +446,7 @@
       }
 
       network_interface {
-         network      = "VPC Name"
+         network      = "<VPC Name>"
          subnetwork   = "subnet-02"
       }
    }
@@ -468,7 +468,7 @@
    ```
    resource "google_compute_firewall" "tf-firewall" {
       name    = "tf-firewall"
-      network = "projects/PROJECT_ID/global/networks/VPC Name"
+      network = "projects/PROJECT_ID/global/networks/<VPC Name>"
 
       allow {
          protocol = "tcp"
