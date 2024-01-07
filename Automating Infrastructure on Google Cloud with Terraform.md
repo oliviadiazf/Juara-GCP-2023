@@ -134,7 +134,7 @@
    }
    ```
 
-   Copy the followinf configuration into the file **modules/instances/instances.tf**
+   Copy the following configuration into the file **modules/instances/instances.tf**
    ```
    resource "google_compute_instance" "tf-instance-1" {
       name         = "tf-instance-1"
@@ -249,3 +249,83 @@
    ```
    terraform init
    ```
+
+
+# Modify and update infrastructure
+
+1. Navigate to the **instances** module and modify the **tf-instance-1** resource to use an `e2-standard-2` machine type.
+
+   Navigate to **modules/instances/instance.tf**. Replace the entire contents of the file with the following:
+   ```
+   resource "google_compute_instance" "tf-instance-1" {
+      name           = "tf-instance-1"
+      machine_type   = "e2-standard-2"
+      zone           = var.zone
+      allow_stopping_for_update = true
+
+      boot_disk {
+         initialize_params {
+            image = "debian-cloud/debian-10"
+         }
+      }
+
+      network_interface {
+         network = "default"
+      }
+   }
+   ```
+   
+2. Modify the **tf-instance-2** resource to use an `e2-standard-2` machine type.
+
+   Navigate to **modules/instances/instance.tf**. Add contents of the file with the following:
+   ```
+   resource "google_compute_instance" "tf-instance-2" {
+      name           = "tf-instance-2"
+      machine_type   = "e2-standard-2"
+      zone           = var.zone
+      allow_stopping_for_update = true
+
+      boot_disk {
+         initialize_params {
+            image = "debian-cloud/debian-10"
+         }
+      }
+
+      network_interface {
+         network = "default"
+      }
+   }
+   ```
+   
+3. Add a third instance resource and name it **`Instance Name`**. For this third resource, use an `e2-standard-2` machine type. Make sure to change the machine type to `e2-standard-2` **to all the three instances**.
+
+   Navigate to **modules/instances/instance.tf**. Add contents of the file with the following:
+   ```
+   resource "google_compute_instance" "Instance Name" {
+      name           = "tf-instance-3"
+      machine_type   = "e2-standard-2"
+      zone           = var.zone
+      allow_stopping_for_update = true
+
+      boot_disk {
+         initialize_params {
+            image = "debian-cloud/debian-10"
+         }
+      }
+
+      network_interface {
+         network = "default"
+      }
+   }
+   ```
+   
+4. Initialize Terraform and `apply` your changes.
+
+   Run the following commands
+   ```
+   terraform init
+   ```
+   ```
+   terraform apply
+   ```
+   
