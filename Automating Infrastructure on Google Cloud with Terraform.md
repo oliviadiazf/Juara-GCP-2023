@@ -460,3 +460,30 @@
    terraform apply
    ```
    
+# Configure a firewall
+
+1. Create a [firewall rule](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) resource in the `main.tf` file, and name it **tf-firewall**.
+
+   Add the following resource to the `main.tf` file and fill in the GCP Project ID
+   ```
+   resource "google_compute_firewall" "tf-firewall" {
+      name    = "tf-firewall"
+      network = "projects/PROJECT_ID/global/networks/VPC Name"
+
+      allow {
+         protocol = "tcp"
+         ports    = ["80"]
+      }
+
+      source_tags   = ["web"]
+      source_ranges = ["0.0.0.0/0"]
+   }
+   ```
+
+   Run the following commands
+   ```
+   terraform init
+   ```
+   ```
+   terraform apply
+   ```
